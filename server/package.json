@@ -1,0 +1,20 @@
+{
+	"name": "chattot_server",
+	"version": "1.0.0",
+	"description": "Server for Chattot chat app",
+	"main": "index.js",
+	"scripts": {
+		"dev": "nodemon index.js",
+		"start": "node index.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Arthur Zverko (StratoDuck)",
+	"license": "ISC",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.17.1"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.7"
+	}
+}

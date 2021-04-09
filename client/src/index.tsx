@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './index.css';
+
+import App from './App/App';
 
 const HelloWorld = () => {
     return (
-        <h1>
-            Hello World
-        </h1>
+        <div>
+            <div id="background"></div>
+            <App />
+        </div>
     );
 }
 
