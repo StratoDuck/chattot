@@ -6,7 +6,6 @@ import { User, Prisma } from '@prisma/client';
 
 import { UsersService } from '../users/users.service';
 import { ISignUpForm } from '../users/users.service';
-import e from 'express';
 
 @Injectable()
 export class AuthService {
