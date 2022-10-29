@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { isEmail } from 'validator';
 import { Injectable, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -13,30 +13,14 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
-  md5(str) {
-    return crypto.createHash('md5').update(str).digest('hex');
+
+  async saltAndHashPassword(password) {
+    const salt = await bcrypt.genSalt(+process.env.BCRYPT_SALT_ROUNDS);
+    return bcrypt.hash(password, salt);
   }
 
-  generateSalt() {
-    const set =
-      '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
-    let salt = '';
-    [...Array(10).keys()].forEach(() => {
-      const p = Math.floor(Math.random() * set.length);
-      salt += set[p];
-    });
-    return salt;
-  }
-
-  saltAndHashPassword(password) {
-    const salt = this.generateSalt();
-    return salt + this.md5(password + salt);
-  }
-
-  validatePassword(plainPassword, hashedPassword) {
-    const salt = hashedPassword.substr(0, 10);
-    const validHash = salt + this.md5(plainPassword + salt);
-    return hashedPassword === validHash;
+  async validatePassword(plainPassword, hashedPassword) {
+    return bcrypt.compare(plainPassword, hashedPassword);
   }
 
   async validateUser(
@@ -51,7 +35,7 @@ export class AuthService {
       'password',
     ]);
 
-    if (!user || !this.validatePassword(password, user.password)) {
+    if (!user || !(await this.validatePassword(password, user.password))) {
       return null;
     }
 
@@ -74,7 +58,7 @@ export class AuthService {
 
     form = {
       ...form,
-      password: this.saltAndHashPassword(form.password),
+      password: await this.saltAndHashPassword(form.password),
     };
     let user;
 
